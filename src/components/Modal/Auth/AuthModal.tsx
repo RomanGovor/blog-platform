@@ -1,40 +1,48 @@
 import { FunctionComponent } from "react";
-import {Modal, ModalCloseButton, ModalFooter} from "@chakra-ui/modal";
+import { Modal, ModalCloseButton } from "@chakra-ui/modal";
 import {
-  Button,
   ModalBody,
   ModalContent,
   ModalHeader,
   ModalOverlay,
-  useDisclosure,
 } from "@chakra-ui/react";
+import { useRecoilState } from "recoil";
+import { authModalState } from "@/atoms/authModalAtom";
 
 const AuthModal: FunctionComponent = () => {
-	const { isOpen, onOpen, onClose } = useDisclosure();
+  const [modalState, setModalState] = useRecoilState(authModalState);
 
-	return (
-		<>
-			<Button onClick={onOpen}>Open Modal</Button>
+  const handleClose = () => {
+    setModalState((prev) => ({
+      ...prev,
+      open: false,
+    }));
+  };
 
-			<Modal isOpen={isOpen} onClose={onClose}>
-				<ModalOverlay />
-				<ModalContent>
-					<ModalHeader>Modal Title</ModalHeader>
-					<ModalCloseButton />
-					<ModalBody>
-						Body
-					</ModalBody>
+  return (
+    <>
+      <Modal isOpen={modalState.open} onClose={handleClose}>
+        <ModalOverlay />
 
-					<ModalFooter>
-						<Button colorScheme='blue' mr={3} onClick={onClose}>
-							Close
-						</Button>
-						<Button variant='ghost'>Secondary Action</Button>
-					</ModalFooter>
-				</ModalContent>
-			</Modal>
-		</>
-	)
+        <ModalContent>
+          <ModalHeader>
+            {modalState.view === "login" && "Login"}
+            {modalState.view === "signup" && "Sign Up"}
+            {modalState.view === "resetPassword" && "Reset Password"}
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+          >
+            Body
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+    </>
+  );
 };
 
 export default AuthModal;
