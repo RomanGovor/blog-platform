@@ -2,9 +2,13 @@ import { FunctionComponent } from "react";
 import { Flex, Image } from "@chakra-ui/react";
 import SearchInput from "@/components/Navbar/SearchInput";
 import RightContent from "@/components/Navbar/RightContent/RightContent";
+import { auth } from "@/firebase/clientApp";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 const Navbar: FunctionComponent = () => {
-  return (
+	const [user, loading, error] = useAuthState(auth);
+
+	return (
     <Flex bg="white" height="44px" padding="6px 12px">
       <Flex align="center" flex="auto">
         <Image alt="reddit face" src="/images/redditFace.svg" height="30px" />
@@ -15,7 +19,7 @@ const Navbar: FunctionComponent = () => {
           display={{ base: "none", md: "unset" }}
         />
 	      <SearchInput />
-	      <RightContent />
+	      <RightContent user={user} />
       </Flex>
     </Flex>
   );
