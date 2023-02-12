@@ -92,6 +92,22 @@ const Login: FunctionComponent<LoginProps> = () => {
       >
         Log In
       </Button>
+	    <Flex fontSize="9pt" justifyContent="center">
+		    <Text mr={1}>Forgot your password?</Text>
+		    <Text
+			    fontSize="9pt"
+			    color="blue.500"
+			    cursor="pointer"
+			    onClick={() =>
+				    setAuthModalState((prev) => ({
+					    ...prev,
+					    view: "resetPassword",
+				    }))
+			    }
+		    >
+			    Reset
+		    </Text>
+	    </Flex>
       <Flex fontSize="9pt" justifyContent="center">
         <Text mr={1}>New Here?</Text>
         <Text
