@@ -5,9 +5,9 @@ admin.initializeApp();
 const db = admin.firestore();
 
 export const createUserDocument = functions.auth
-	.user()
-	.onCreate(async (user) => {
-		db.collection("users")
-			.doc(user.uid)
-			.set(JSON.parse(JSON.stringify(user)));
-	});
+  .user()
+  .onCreate(async (user) => {
+    db.collection("users")
+      .doc(user.uid)
+      .set(JSON.parse(JSON.stringify(user)));
+  });
