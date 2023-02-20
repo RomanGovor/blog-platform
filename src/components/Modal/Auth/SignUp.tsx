@@ -3,8 +3,10 @@ import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import { useSetRecoilState } from "recoil";
 import { authModalState } from "@/atoms/authModalAtom";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
-import { auth } from "@/firebase/clientApp";
+import {auth, firestore} from "@/firebase/clientApp";
 import { FIREBASE_ERRORS } from "@/firebase/errors";
+import {doc, runTransaction, serverTimestamp} from "@firebase/firestore";
+import {createUser} from "@/helpers/createUser";
 
 type SignUpProps = {};
 
@@ -18,21 +20,23 @@ const SignUp: FunctionComponent<SignUpProps> = () => {
     confirmPassword: "",
   });
 
-  const [createUserWithEmailAndPassword, user, loading, userError] =
+  const [createUserWithEmailAndPassword, userCred, loading, userError] =
     useCreateUserWithEmailAndPassword(auth);
 
   // Firebase
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (error) setError("");
 
     if (signUpForm.password !== signUpForm.confirmPassword) {
-      setError("Passwordd do not match");
+      setError("Password do not match");
       return;
     }
 
-    createUserWithEmailAndPassword(signUpForm.email, signUpForm.password);
+    const us = await createUserWithEmailAndPassword(signUpForm.email, signUpForm.password);
+
+	  createUser(us);
   };
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
