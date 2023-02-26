@@ -81,7 +81,6 @@ const ActionIcons: FunctionComponent<ActionIconsProps> = () => {
           cursor="pointer"
           borderRadius={4}
           _hover={{ bg: "gray.200" }}
-          // onClick={toggleMenuOpen}
         >
           <Icon as={GrAdd} fontSize={20} />
         </Flex>

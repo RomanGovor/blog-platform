@@ -19,10 +19,12 @@ import {
 } from "@chakra-ui/react";
 import { BsFillEyeFill, BsFillPersonFill } from "react-icons/bs";
 import { HiLockClosed } from "react-icons/hi2";
-import {doc, runTransaction, serverTimestamp} from "@firebase/firestore";
-import {auth, firestore} from "@/firebase/clientApp";
-import {useAuthState} from "react-firebase-hooks/auth";
-import {CommunityEnum, CommunityType} from "@/types/community";
+import { doc, runTransaction, serverTimestamp } from "@firebase/firestore";
+import { auth, firestore } from "@/firebase/clientApp";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { CommunityEnum, CommunityType } from "@/types/community";
+import { useRouter } from "next/router";
+import useDirectory from "@/hooks/useDirectory";
 
 type CreateCommunityModalProps = {
   open: boolean;
@@ -33,12 +35,17 @@ const CreateCommunityModal: FunctionComponent<CreateCommunityModalProps> = ({
   open,
   handleClose,
 }) => {
-	const [user] = useAuthState(auth);
+  const [user] = useAuthState(auth);
   const [communityName, setCommunityName] = useState("");
   const [charsRemaining, setCharsRemaining] = useState(21);
-  const [communityType, setCommunityType] = useState<CommunityType>(CommunityEnum.PUBLIC);
-	const [error, setError] = useState('');
-	const [loading, setLoading] = useState(false);
+  const [communityType, setCommunityType] = useState<CommunityType>(
+    CommunityEnum.PUBLIC
+  );
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const router = useRouter();
+  const { toggleMenuOpen } = useDirectory();
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.value.length > 21) return;
@@ -56,49 +63,53 @@ const CreateCommunityModal: FunctionComponent<CreateCommunityModalProps> = ({
     setCommunityType(event.target.name as CommunityType);
   };
 
-	const handleCreateCommunity = async () => {
-		if (error) setError("");
-		const format = /[ `!@#$%^&*()+\-=\[\]{};':"\\|,.<>\/?~]/;
+  const handleCreateCommunity = async () => {
+    if (error) setError("");
+    const format = /[ `!@#$%^&*()+\-=\[\]{};':"\\|,.<>\/?~]/;
 
-		if (format.test(communityName) || communityName.length < 3) {
-			return setError(
-				"Community names must be between 3–21 characters, and can only contain letters, numbers, or underscores."
-			);
-		}
+    if (format.test(communityName) || communityName.length < 3) {
+      return setError(
+        "Community names must be between 3–21 characters, and can only contain letters, numbers, or underscores."
+      );
+    }
 
-		setLoading(true);
-		try {
-			// Create community document and communitySnippet subcollection document on user
-			const communityDocRef = doc(firestore, "communities", communityName);
+    setLoading(true);
+    try {
+      // Create community document and communitySnippet subcollection document on user
+      const communityDocRef = doc(firestore, "communities", communityName);
 
-			await runTransaction(firestore, async (transaction) => {
-				const communityDoc = await transaction.get(communityDocRef);
-				if (communityDoc.exists()) {
-					throw new Error(`Sorry, /r${name} is taken. Try another.`);
-				}
+      await runTransaction(firestore, async (transaction) => {
+        const communityDoc = await transaction.get(communityDocRef);
+        if (communityDoc.exists()) {
+          throw new Error(`Sorry, /r${name} is taken. Try another.`);
+        }
 
-				transaction.set(communityDocRef, {
-					creatorId: user?.uid,
-					createdAt: serverTimestamp(),
-					numberOfMembers: 1,
-					privacyType: communityType,
-				});
+        transaction.set(communityDocRef, {
+          creatorId: user?.uid,
+          createdAt: serverTimestamp(),
+          numberOfMembers: 1,
+          privacyType: communityType,
+        });
 
-				transaction.set(
-					doc(firestore, `users/${user?.uid}/communitySnippets`, communityName),
-					{
-						communityId: communityName,
-						isModerator: true,
-					}
-				);
-			});
-		} catch (error: any) {
-			console.log("Transaction error", error);
-			setError(error.message);
-		}
+        transaction.set(
+          doc(firestore, `users/${user?.uid}/communitySnippets`, communityName),
+          {
+            communityId: communityName,
+            isModerator: true,
+          }
+        );
+      });
 
-		setLoading(false);
-	};
+      handleClose();
+      toggleMenuOpen();
+      router.replace(`r/${communityName}`);
+    } catch (error: any) {
+      console.log("Transaction error", error);
+      setError(error.message);
+    }
+
+    setLoading(false);
+  };
 
   return (
     <>
@@ -145,9 +156,9 @@ const CreateCommunityModal: FunctionComponent<CreateCommunityModalProps> = ({
               >
                 {charsRemaining} Characters remaining
               </Text>
-	            <Text fontSize="9pt" color="red" pt={1}>
-		            {error}
-	            </Text>
+              <Text fontSize="9pt" color="red" pt={1}>
+                {error}
+              </Text>
               <Box mt={4} mb={4}>
                 <Text fontWeight={600} fontSize={15}>
                   Community Type

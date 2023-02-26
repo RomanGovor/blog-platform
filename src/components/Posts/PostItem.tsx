@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useState } from "react";
 import { Post } from "@/atoms/postsAtom";
 import { AiOutlineDelete } from "react-icons/ai";
-import { BsChat } from "react-icons/bs";
+import { BsChat, BsDot } from "react-icons/bs";
 import {
   IoArrowDownCircleOutline,
   IoArrowDownCircleSharp,
@@ -23,6 +23,8 @@ import {
 } from "@chakra-ui/react";
 import moment from "moment";
 import { useRouter } from "next/router";
+import {FaReddit} from "react-icons/fa";
+import Link from "next/link";
 
 type PostItemProps = {
   post: Post;
@@ -126,6 +128,29 @@ const PostItem: FunctionComponent<PostItemProps> = ({
         )}
         <Stack spacing={1} p="10px">
           <Stack direction="row" spacing={0.6} align="center" fontSize="9pt">
+	          {homePage && (
+		          <>
+			          {post.communityImageURL ? (
+				          <Image
+					          src={post.communityImageURL}
+					          alt="photo"
+					          borderRadius="full"
+					          boxSize="18px"
+					          mr={2}
+				          />
+			          ) : (
+				          <Icon as={FaReddit} fontSize="18pt" mr={1} color="blue.500" />
+			          )}
+			          <Link href={`r/${post.communityId}`}>
+				          <Text
+					          fontWeight={700}
+					          _hover={{ textDecoration: "underline" }}
+					          onClick={(event) => event.stopPropagation()}
+				          >{`r/${post.communityId}`}</Text>
+			          </Link>
+			          <Icon as={BsDot} color="gray.500" fontSize={8} />
+		          </>
+	          )}
             <Text>
               Posted by u/{post.creatorDisplayName}{" "}
               {moment(new Date(post.createdAt?.seconds * 1000)).fromNow()}

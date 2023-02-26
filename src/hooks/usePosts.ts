@@ -73,7 +73,6 @@ const usePosts = () => {
     				(vote) => vote.id !== existingVote.id
     			);
 
-    			// delete the postVote document
     			batch.delete(postVoteRef);
 
     			voteChange *= -1;
@@ -91,7 +90,6 @@ const usePosts = () => {
     				voteValue: vote,
     			};
 
-    			// updating the existing postVote document
     			batch.update(postVoteRef, {
     				voteValue: vote,
     			});
@@ -118,7 +116,6 @@ const usePosts = () => {
     		}));
     	}
 
-    	// update our post document
     	const postRef = doc(firestore, "posts", post.id!);
     	batch.update(postRef, { voteStatus: voteStatus + voteChange });
 

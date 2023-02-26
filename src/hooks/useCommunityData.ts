@@ -51,6 +51,7 @@ const useCommunityData = () => {
       setCommunityStateValue((prev) => ({
         ...prev,
         mySnippets: snippets as CommunitySnippet[],
+	      snippetsFetched: true,
       }));
     } catch (error: any) {
       console.log("Error getting user snippets", error);
@@ -67,6 +68,7 @@ const useCommunityData = () => {
       const newSnippet: CommunitySnippet = {
         communityId: community.id,
         imageURL: community.imageURL || "",
+	      isModerator: user?.uid === community.creatorId,
       };
 
       batch.set(
