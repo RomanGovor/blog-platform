@@ -1,19 +1,31 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { GetServerSidePropsContext, NextPage } from "next";
 import { doc, getDoc } from "@firebase/firestore";
 import { firestore } from "@/firebase/clientApp";
-import { Community } from "@/atoms/communitiesAtom";
+import {Community, communityState} from "@/atoms/communitiesAtom";
 import safeJsonStringify from "safe-json-stringify";
 import NotFound from "@/components/Community/NotFound";
 import Header from "@/components/Community/Header";
 import PageContent from "@/components/Layout/PageContent";
 import CreatePostLink from "@/components/Community/CreatePostLink";
+import Posts from "@/components/Posts/Posts";
+import { useSetRecoilState } from "recoil";
+import About from "@/components/Community/About";
 
 interface CommunityPageProps {
   communityData: Community;
 }
 
 const CommunityPage: NextPage<CommunityPageProps> = ({ communityData }) => {
+	const setCommunityStateValue = useSetRecoilState(communityState);
+
+	useEffect(() => {
+		setCommunityStateValue((prev) => ({
+			...prev,
+			currentCommunity: communityData,
+		}));
+	}, [communityData]);
+
   if (!communityData) {
     return <NotFound />;
   }
@@ -24,8 +36,11 @@ const CommunityPage: NextPage<CommunityPageProps> = ({ communityData }) => {
       <PageContent>
         <>
 	        <CreatePostLink />
+	        <Posts communityData={communityData} />
         </>
-        <>RHS</>
+        <>
+	        <About communityData={communityData} />
+        </>
       </PageContent>
     </>
   );

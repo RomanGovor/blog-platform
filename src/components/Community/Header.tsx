@@ -20,8 +20,17 @@ const Header: FunctionComponent<HeaderProps> = ({ communityData }) => {
       <Box height="50%" bg="blue.400" />
       <Flex justifyContent="center" bg="white" height="50%">
         <Flex width="95%" maxWidth="860px">
-          {communityData.imageURL ? (
-            <Image />
+          {communityStateValue.currentCommunity?.imageURL ? (
+	          <Image
+		          borderRadius="full"
+		          boxSize="66px"
+		          src={communityStateValue.currentCommunity.imageURL}
+		          alt="background"
+		          position="relative"
+		          top={-3}
+		          color="blue.500"
+		          border="4px solid white"
+	          />
           ) : (
             <Icon
               as={FaReddit}

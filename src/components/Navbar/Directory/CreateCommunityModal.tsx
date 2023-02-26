@@ -96,12 +96,7 @@ const CreateCommunityModal: FunctionComponent<CreateCommunityModalProps> = ({
 			console.log("Transaction error", error);
 			setError(error.message);
 		}
-		// setSnippetState((prev) => ({
-		// 	...prev,
-		// 	mySnippets: [],
-		// }));
-		// handleClose();
-		// router.push(`r/${name}`);
+
 		setLoading(false);
 	};
 

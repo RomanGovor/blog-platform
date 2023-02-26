@@ -7,13 +7,10 @@ import {
   IoNotificationsOutline,
   IoVideocamOutline,
 } from "react-icons/io5";
-// import useDirectory from "../../../hooks/useDirectory";
 
 type ActionIconsProps = {};
 
 const ActionIcons: FunctionComponent<ActionIconsProps> = () => {
-  // const { toggleMenuOpen } = useDirectory();
-
   return (
     <Flex alignItems="center" flexGrow={1}>
       <Box
