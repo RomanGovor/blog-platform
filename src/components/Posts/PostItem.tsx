@@ -22,6 +22,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import moment from "moment";
+import { useRouter } from "next/router";
 
 type PostItemProps = {
   post: Post;
@@ -49,6 +50,8 @@ const PostItem: FunctionComponent<PostItemProps> = ({
 }) => {
   const [loadingImage, setLoadingImage] = useState(true);
   const [loadingDelete, setLoadingDelete] = useState(false);
+  const router = useRouter();
+  const singlePostPage = !onSelectPost;
 
   const [error, setError] = useState(false);
 
@@ -57,6 +60,7 @@ const PostItem: FunctionComponent<PostItemProps> = ({
   ) => {
     event.stopPropagation();
     setLoadingDelete(true);
+
     try {
       const success = await onDeletePost(post);
 
@@ -64,6 +68,9 @@ const PostItem: FunctionComponent<PostItemProps> = ({
         throw new Error("Failed to delete post");
       }
 
+			if (singlePostPage) {
+				router.push(`/r/${post.communityId}`)
+			}
     } catch (error: any) {
       setError(error.message);
     }
@@ -74,19 +81,19 @@ const PostItem: FunctionComponent<PostItemProps> = ({
     <Flex
       border="1px solid"
       bg="white"
-      borderColor={"gray.300"}
-      borderRadius={"4px"}
-      _hover={{ borderColor: "gray.500" }}
-      cursor={"pointer"}
+      borderColor={singlePostPage ? "white" : "gray.300"}
+      borderRadius={singlePostPage ? "4px 4px 0px 0px" : "4px"}
+      _hover={{ borderColor: singlePostPage ? "none" : "gray.500" }}
+      cursor={singlePostPage ? "unset" : "pointer"}
       onClick={() => onSelectPost && onSelectPost(post)}
     >
       <Flex
         direction="column"
         align="center"
-        bg={"gray.100"}
+        bg={singlePostPage ? "none" : "gray.100"}
         p={2}
         width="40px"
-        borderRadius={4}
+        borderRadius={singlePostPage ? "0" : "3px 0px 0px 3px"}
       >
         <Icon
           as={

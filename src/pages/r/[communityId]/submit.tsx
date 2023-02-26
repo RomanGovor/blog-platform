@@ -5,6 +5,7 @@ import NewPostForm from "@/components/Posts/NewPostForm";
 import {useAuthState} from "react-firebase-hooks/auth";
 import { auth } from "@/firebase/clientApp";
 import useCommunityData from "@/hooks/useCommunityData";
+import About from "@/components/Community/About";
 
 const SubmitPostPage: NextPage = () => {
 	const [user] = useAuthState(auth);
@@ -21,6 +22,9 @@ const SubmitPostPage: NextPage = () => {
 			  )}
 		  </>
 		  <>
+			  {communityStateValue.currentCommunity && (
+				  <About communityData={communityStateValue.currentCommunity} />
+			  )}
 		  </>
 	  </PageContent>
   );

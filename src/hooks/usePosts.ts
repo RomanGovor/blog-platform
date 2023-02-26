@@ -128,9 +128,13 @@ const usePosts = () => {
     }
   };
 
-  const onSelectPost = (post: Post) => {
-
-  };
+	const onSelectPost = (post: Post) => {
+		setPostStateValue((prev) => ({
+			...prev,
+			selectedPost: post,
+		}));
+		router.push(`/r/${post.communityId}/comments/${post.id}`);
+	};
 
   const onDeletePost = async (post: Post): Promise<boolean> => {
     try {
